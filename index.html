@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="./人生游戏.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="一个模拟人生的游戏，通过完成任务和击败Boss来提升自己" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="人生游戏" />
+    <link rel="apple-touch-icon" href="./人生游戏.jpeg" />
+    <title>人生游戏</title>
+    <script type="module" crossorigin src="./assets/index-DwfDpYqS.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BQQq1_v5.css">
+  <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+  <body>
+    <div id="root"></div>
+    <button id="installBtn" style="position: fixed; bottom: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; display: none; z-index: 9999;">安装应用</button>
+    <script>
+      console.log('PWA安装提示功能已加载');
+      
+      let deferredPrompt;
+      
+      // 检查浏览器是否支持PWA安装提示
+      if ('beforeinstallprompt' in window) {
+        console.log('浏览器支持PWA安装提示');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+          console.log('beforeinstallprompt事件触发');
+          e.preventDefault();
+          deferredPrompt = e;
+          console.log('显示安装按钮');
+          document.getElementById('installBtn').style.display = 'block';
+        });
+      } else {
+        console.log('浏览器不支持PWA安装提示');
+      }
+      
+      document.getElementById('installBtn').addEventListener('click', async () => {
+        console.log('安装按钮被点击');
+        if (deferredPrompt) {
+          console.log('触发安装提示');
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log('用户对安装提示的响应:', outcome);
+          deferredPrompt = null;
+          document.getElementById('installBtn').style.display = 'none';
+        } else {
+          console.log('没有deferredPrompt对象');
+        }
+      });
+      
+      window.addEventListener('appinstalled', (evt) => {
+        console.log('应用安装成功');
+        document.getElementById('installBtn').style.display = 'none';
+      });
+      
+      // 检查Service Worker注册状态
+      if ('serviceWorker' in navigator) {
+        console.log('Service Worker支持可用');
+        navigator.serviceWorker.ready.then((registration) => {
+          console.log('Service Worker已注册:', registration);
+        }).catch((error) => {
+          console.error('Service Worker注册失败:', error);
+        });
+      } else {
+        console.log('Service Worker不受支持');
+      }
+    </script>
+  </body>
+</html>
